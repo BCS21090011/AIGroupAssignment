@@ -18,18 +18,21 @@ class PopulationPredict():
         self.cntry:list=self.csvSrc["Country/State"].drop_duplicates().to_list()
 
     def GetAdmnDstrct(self,cntryName:str)->list:
+        self.cntrySelctd:str=cntryName
+
         #Get all datas for the given country or state:
-        self.dataSrc=self.csvSrc.loc[self.csvSrc["Country/State"]==cntryName]
+        self.cntryDataSrc=self.csvSrc.loc[self.csvSrc["Country/State"]==cntryName]
 
         #Getting the administrative district for the given country:
-        admnDstrct:list=self.dataSrc["Administrative district"].drop_duplicates().to_list()
+        admnDstrct:list=self.cntryDataSrc["Administrative district"].drop_duplicates().to_list()
 
         return admnDstrct
 
     def GetDatas(self,admnstrtName:str):
-        #Get all datas for the given administative district:
+        self.admnDSelctd:str=admnstrtName
 
-        self.dataSrc=self.dataSrc.loc[self.dataSrc["Administrative district"]==admnstrtName]
+        #Get all datas for the given administative district:
+        self.dataSrc=self.cntryDataSrc.loc[self.cntryDataSrc["Administrative district"]==admnstrtName]
 
         #Get all datas by gender:
         self.mlDtFrmSrc=self.dataSrc.loc[self.dataSrc["Sex"]=="Male"]
@@ -64,10 +67,17 @@ class PopulationPredict():
         fmlPredict,self.fmlModel=self.MakePrediction(predictYear,self.fmlX,self.fmlY)
         ttlPredict,self.ttlModel=self.MakePrediction(predictYear,self.ttlX,self.ttlY)
 
+        location:str=self.cntrySelctd
+
+        if self.admnDSelctd!="None":
+            location=self.admnDSelctd+", "+location
+
         #Plotting graphs:
         plt.figure(1)   #Graph for male population.
         plt.clf()   #To clear the graph.
-        plt.title("Male population")
+        plt.title(f"Male population at {location} ({predictYear})")
+        plt.xlabel("Year")
+        plt.ylabel("Population('000)")
         mlnpx=np.array(self.mlX[:,0])   #Convert it to a 1d array.
         mlnpy=np.array(self.mlY[:,0])
         plt.scatter(mlnpx,mlnpy)    #Plot the points of the datas.
@@ -78,7 +88,9 @@ class PopulationPredict():
 
         plt.figure(2)   #Graph for female population.
         plt.clf()
-        plt.title("Female population")
+        plt.title(f"Female population at {location} ({predictYear})")
+        plt.xlabel("Year")
+        plt.ylabel("Population('000)")
         fmlnpx=np.array(self.fmlX[:,0])
         fmlnpy=np.array(self.fmlY[:,0])
         plt.scatter(fmlnpx,fmlnpy)
@@ -89,7 +101,9 @@ class PopulationPredict():
 
         plt.figure(3)   #Graph for total population.
         plt.clf()
-        plt.title("Total population")
+        plt.title(f"Total population at {location} ({predictYear})")
+        plt.xlabel("Year")
+        plt.ylabel("Population('000)")
         ttlnpx=np.array(self.ttlX[:,0])
         ttlnpy=np.array(self.ttlY)
         plt.scatter(ttlnpx,ttlnpy)
@@ -133,7 +147,7 @@ def ConsoleUI():    #Console app.
     while repeat==True:
 
         #Input country or state:
-        print(f"Countries or states in \"{srcFilePath:^20}\":")
+        print(f"Countries or states in \"{srcFilePath}\":")
 
         for i in range(len(p0.cntry)):
             print(f"Index: {i:^3}|   Country or state: {p0.cntry[i]:^16}")
@@ -158,9 +172,9 @@ def ConsoleUI():    #Console app.
         mlPrdt,fmlPrdt,ttlPrdt=p0.MakePredictions(yrPrdt)
 
         #Results:
-        print(f"Population prediction for year {yrPrdt:^4} for {p0.cntry[cntryIndex]:^16}",end="")
+        print(f"Population prediction for year {yrPrdt} for {p0.cntry[cntryIndex]}",end="")
         if admnstrt[admnstrtIndex]!="None":
-            print(f" {admnstrt[admnstrtIndex]:^16}",end="")
+            print(f", {admnstrt[admnstrtIndex]}",end="")
         print(":")
 
         print(f"Male population ('000): {mlPrdt:^8}")
