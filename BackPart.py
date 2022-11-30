@@ -64,18 +64,19 @@ class PopulationPredict():
         fmlPredict,self.fmlModel=self.MakePrediction(predictYear,self.fmlX,self.fmlY)
         ttlPredict,self.ttlModel=self.MakePrediction(predictYear,self.ttlX,self.ttlY)
 
-        plt.figure(1)
-        plt.clf()
+        #Plotting graphs:
+        plt.figure(1)   #Graph for male population.
+        plt.clf()   #To clear the graph.
         plt.title("Male population")
-        mlnpx=np.array(self.mlX[:,0])
+        mlnpx=np.array(self.mlX[:,0])   #Convert it to a 1d array.
         mlnpy=np.array(self.mlY[:,0])
-        plt.scatter(mlnpx,mlnpy)
-        mlm,mlc=np.polyfit(mlnpx,mlnpy,1)
-        plt.plot(mlnpx,mlm*mlnpx+mlc,label="Best fit line")
+        plt.scatter(mlnpx,mlnpy)    #Plot the points of the datas.
+        mlm,mlc=np.polyfit(mlnpx,mlnpy,1)   #Get the m and c for the equation Y=mX+c.
+        plt.plot(mlnpx,mlm*mlnpx+mlc,label="Best fit line") #Plot the best fit line.
         plt.legend(loc="upper right")
-        plt.savefig("Male.png")
+        plt.savefig("Male.png") #Save the graph at the same directory as this code file.
 
-        plt.figure(2)
+        plt.figure(2)   #Graph for female population.
         plt.clf()
         plt.title("Female population")
         fmlnpx=np.array(self.fmlX[:,0])
@@ -86,7 +87,7 @@ class PopulationPredict():
         plt.legend(loc="upper right")
         plt.savefig("Female.png")
 
-        plt.figure(3)
+        plt.figure(3)   #Graph for total population.
         plt.clf()
         plt.title("Total population")
         ttlnpx=np.array(self.ttlX[:,0])
@@ -99,10 +100,10 @@ class PopulationPredict():
 
         return mlPredict,fmlPredict,ttlPredict
 
-def MxPlusC(m,x,c):
+def MxPlusC(m,x,c): #Just write it incase needed.
     return m*x+c
 
-def ConsoleUI():
+def ConsoleUI():    #Console app.
 
     repeat:bool=True
     srcFilePath:str=""
