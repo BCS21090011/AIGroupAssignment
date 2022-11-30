@@ -29,7 +29,7 @@ class PopulationPredict():
     def GetDatas(self,admnstrtName:str):
         #Get all datas for the given administative district:
 
-        self.dataSrc=self.csvSrc.loc[self.csvSrc["Administrative district"]==admnstrtName]
+        self.dataSrc=self.dataSrc.loc[self.dataSrc["Administrative district"]==admnstrtName]
 
         #Get all datas by gender:
         self.mlDtFrmSrc=self.dataSrc.loc[self.dataSrc["Sex"]=="Male"]
@@ -60,38 +60,42 @@ class PopulationPredict():
         return predictPop,model
 
     def MakePredictions(self,predictYear:int):
-        rw:int=2
-        clmn:int=2
-
         mlPredict,self.mlModel=self.MakePrediction(predictYear,self.mlX,self.mlY)
         fmlPredict,self.fmlModel=self.MakePrediction(predictYear,self.fmlX,self.fmlY)
         ttlPredict,self.ttlModel=self.MakePrediction(predictYear,self.ttlX,self.ttlY)
 
-        plt.subplot(rw,clmn,1)
+        plt.figure(1)
+        plt.clf()
         plt.title("Male population")
         mlnpx=np.array(self.mlX[:,0])
         mlnpy=np.array(self.mlY[:,0])
         plt.scatter(mlnpx,mlnpy)
         mlm,mlc=np.polyfit(mlnpx,mlnpy,1)
-        plt.plot(mlnpx,mlm*mlnpx+mlc)
+        plt.plot(mlnpx,mlm*mlnpx+mlc,label="Best fit line")
+        plt.legend(loc="upper right")
+        plt.savefig("Male.png")
 
-        plt.subplot(rw,clmn,2)
+        plt.figure(2)
+        plt.clf()
         plt.title("Female population")
         fmlnpx=np.array(self.fmlX[:,0])
         fmlnpy=np.array(self.fmlY[:,0])
         plt.scatter(fmlnpx,fmlnpy)
         fmlm,fmlc=np.polyfit(fmlnpx,fmlnpy,1)
-        plt.plot(fmlnpx,fmlm*fmlnpx+fmlc)
+        plt.plot(fmlnpx,fmlm*fmlnpx+fmlc,label="Best fit line")
+        plt.legend(loc="upper right")
+        plt.savefig("Female.png")
 
-        plt.subplot(rw,clmn,3)
+        plt.figure(3)
+        plt.clf()
         plt.title("Total population")
         ttlnpx=np.array(self.ttlX[:,0])
         ttlnpy=np.array(self.ttlY)
         plt.scatter(ttlnpx,ttlnpy)
         ttlm,ttlc=np.polyfit(ttlnpx,ttlnpy,1)
-        plt.plot(ttlnpx,ttlm*ttlnpx+ttlc)
-
-        plt.show()
+        plt.plot(ttlnpx,ttlm*ttlnpx+ttlc,label="Best fit line")
+        plt.legend(loc="upper right")
+        plt.savefig("Total.png")
 
         return mlPredict,fmlPredict,ttlPredict
 
@@ -133,7 +137,7 @@ def ConsoleUI():
         for i in range(len(p0.cntry)):
             print(f"Index: {i:^3}|   Country or state: {p0.cntry[i]:^16}")
 
-        cntryIndex:int=io.ReadInt(qstStr="Choose a country or state (Index): ",inMin=0,inMax=len(p0.cntry))
+        cntryIndex:int=io.ReadInt(qstStr="Choose a country or state (Index): ",inMin=0,inMax=len(p0.cntry)-1)
 
         #Pass the country or state:
         admnstrt:list=p0.GetAdmnDstrct(cntryName=p0.cntry[cntryIndex])
@@ -144,7 +148,7 @@ def ConsoleUI():
         for i in range(len(admnstrt)):
             print(f"Index: {i:^3}|  Administrative district: {admnstrt[i]}")
 
-        admnstrtIndex:int=io.ReadInt(qstStr="Choose an administrative district (Index): ",inMin=0,inMax=len(admnstrt))
+        admnstrtIndex:int=io.ReadInt(qstStr="Choose an administrative district (Index): ",inMin=0,inMax=len(admnstrt)-1)
 
         #Pass the administrative district:
         p0.GetDatas(admnstrtName=admnstrt[admnstrtIndex])
@@ -153,7 +157,11 @@ def ConsoleUI():
         mlPrdt,fmlPrdt,ttlPrdt=p0.MakePredictions(yrPrdt)
 
         #Results:
-        print(f"Population prediction for year {yrPrdt:^4}:")
+        print(f"Population prediction for year {yrPrdt:^4} for {p0.cntry[cntryIndex]:^16}",end="")
+        if admnstrt[admnstrtIndex]!="None":
+            print(f" {admnstrt[admnstrtIndex]:^16}",end="")
+        print(":")
+
         print(f"Male population ('000): {mlPrdt:^8}")
         print(f"Female population ('000): {fmlPrdt:^8}")
         print(f"Total population ('000): {ttlPrdt:^8}")
