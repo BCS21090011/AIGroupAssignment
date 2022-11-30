@@ -81,10 +81,14 @@ def YNDecision(decisionStr:str="")->bool:
 
 if __name__ == "__main__":
 
-    while True:
+    exit:bool=False
+
+    while exit==False:
+
         userInput = ReadInt("int Input: ")
         print("User's int inputed: ", userInput)
         userInput = ReadFloat("float Input: ")
         print("User's float inputed: ", userInput)
+        exit=YNDecision(decisionStr="Exit? (Y/N)\n")
 
     input()
