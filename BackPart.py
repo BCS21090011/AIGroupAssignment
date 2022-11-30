@@ -53,16 +53,50 @@ class PopulationPredict():
         for i in range(len(self.mlY)):
             self.ttlY=np.append(self.ttlY,self.mlY[i]+self.fmlY[i])
 
-    def MakePrediction(self,predictYear:int=2000):
-        self.mlModel=ln.LinearRegression().fit(self.mlX,self.mlY)
-        self.fmlModel=ln.LinearRegression().fit(self.fmlX,self.fmlY)
-        self.ttlModel=ln.LinearRegression().fit(self.ttlX,self.ttlY)
+    def MakePrediction(self,predictYear:int,x,y):
+        model=ln.LinearRegression().fit(x,y)
+        predictPop:float=float(model.predict([[predictYear]]))
 
-        mlPredict:float=float(self.mlModel.predict([[predictYear]]))
-        fmlPredict:float=float(self.fmlModel.predict([[predictYear]]))
-        ttlPredict:float=float(self.ttlModel.predict([[predictYear]]))
+        return predictPop,model
+
+    def MakePredictions(self,predictYear:int):
+        rw:int=2
+        clmn:int=2
+
+        mlPredict,self.mlModel=self.MakePrediction(predictYear,self.mlX,self.mlY)
+        fmlPredict,self.fmlModel=self.MakePrediction(predictYear,self.fmlX,self.fmlY)
+        ttlPredict,self.ttlModel=self.MakePrediction(predictYear,self.ttlX,self.ttlY)
+
+        plt.subplot(rw,clmn,1)
+        plt.title("Male population")
+        mlnpx=np.array(self.mlX[:,0])
+        mlnpy=np.array(self.mlY[:,0])
+        plt.scatter(mlnpx,mlnpy)
+        mlm,mlc=np.polyfit(mlnpx,mlnpy,1)
+        plt.plot(mlnpx,mlm*mlnpx+mlc)
+
+        plt.subplot(rw,clmn,2)
+        plt.title("Female population")
+        fmlnpx=np.array(self.fmlX[:,0])
+        fmlnpy=np.array(self.fmlY[:,0])
+        plt.scatter(fmlnpx,fmlnpy)
+        fmlm,fmlc=np.polyfit(fmlnpx,fmlnpy,1)
+        plt.plot(fmlnpx,fmlm*fmlnpx+fmlc)
+
+        plt.subplot(rw,clmn,3)
+        plt.title("Total population")
+        ttlnpx=np.array(self.ttlX[:,0])
+        ttlnpy=np.array(self.ttlY)
+        plt.scatter(ttlnpx,ttlnpy)
+        ttlm,ttlc=np.polyfit(ttlnpx,ttlnpy,1)
+        plt.plot(ttlnpx,ttlm*ttlnpx+ttlc)
+
+        plt.show()
 
         return mlPredict,fmlPredict,ttlPredict
+
+def MxPlusC(m,x,c):
+    return m*x+c
 
 def ConsoleUI():
 
@@ -116,7 +150,7 @@ def ConsoleUI():
         p0.GetDatas(admnstrtName=admnstrt[admnstrtIndex])
 
         yrPrdt:int=io.ReadInt(qstStr="Year to predict: ",inMin=1000,inMax=10000)
-        mlPrdt,fmlPrdt,ttlPrdt=p0.MakePrediction(yrPrdt)
+        mlPrdt,fmlPrdt,ttlPrdt=p0.MakePredictions(yrPrdt)
 
         #Results:
         print(f"Population prediction for year {yrPrdt:^4}:")
