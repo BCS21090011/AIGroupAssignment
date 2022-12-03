@@ -48,10 +48,7 @@ def ReadFloat(qstStr:str="",inMin:float=None,inMax:float=None)->float:
 
     return userInput
 
-def ReadStr(qstStr:str="", validStr=['y','Y','n','N'])->str:
-
-    if validStr is None:
-        validStr = ['y', 'Y', 'n', 'N']
+def ReadStr(qstStr:str="", validStr:list=None)->str:
     valid:bool=False
     userInput:str=""
 
@@ -68,10 +65,7 @@ def ReadStr(qstStr:str="", validStr=['y','Y','n','N'])->str:
     return userInput
 
 def YNDecision(decisionStr:str="")->bool:
-
-    userInput:str='n'
-
-    userInput=ReadStr(qstStr=decisionStr)
+    userInput:str=ReadStr(qstStr=decisionStr,validStr=['y','Y','n','N'])
 
     if userInput in ['y','Y']:
         return True
