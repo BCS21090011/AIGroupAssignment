@@ -24,9 +24,9 @@ class PopulationPredict():
         self.cntryDataSrc=self.csvSrc.loc[self.csvSrc["Country/State"]==cntryName]
 
         #Getting the administrative district for the given country:
-        admnDstrct:list=self.cntryDataSrc["Administrative district"].drop_duplicates().to_list()
+        self.admnDstrct:list=self.cntryDataSrc["Administrative district"].drop_duplicates().to_list()
 
-        return admnDstrct
+        return self.admnDstrct
 
     def GetDatas(self,admnstrtName:str):
         self.admnDSelctd:str=admnstrtName
@@ -161,7 +161,7 @@ def ConsoleUI():    #Console app.
         print(f"Administrative districts in {p0.cntry[cntryIndex]}:")
 
         for i in range(len(admnstrt)):
-            print(f"Index: {i:^3}|  Administrative district: {admnstrt[i]}")
+            print(f"Index: {i:^3}|  Administrative district: {admnstrt[i]:^16}")
 
         admnstrtIndex:int=io.ReadInt(qstStr="Choose an administrative district (Index): ",inMin=0,inMax=len(admnstrt)-1)
 
