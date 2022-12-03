@@ -119,7 +119,7 @@ def MxPlusC(m,x,c): #Just write it incase needed.
 
 def ConsoleUI():    #Console app.
 
-    repeat:bool=True
+    repeat:bool=True    #This is for the loop to run as do while loop.
     srcFilePath:str=""
     fileValid:bool=False
     mlPrdt:int=0
@@ -144,7 +144,7 @@ def ConsoleUI():    #Console app.
     #Pass the .csv file path:
     p0=PopulationPredict(srcFilePath)
 
-    while repeat==True:
+    while repeat==True: #If user choose to repeat.
 
         #Input country or state:
         print(f"Countries or states in \"{srcFilePath}\":")
